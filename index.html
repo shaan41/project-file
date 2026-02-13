@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Suprise Question!</title>
+    <style>
+        body {
+            background-image: url('/static/bg-1.webp');
+            background-color: #ffebee;
+            background-size: cover;
+            font-family: 'Auberge', 'Great Vibes', cursive;
+            align-items: center; 
+            display: flex; 
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            flex-direction: column
+        }
+        .container {text-align: center; z-index: 1; }
+        h1 {color: black; font-size: 3rem; margin-bottom: 20px; align-content: center;}
+
+        .buttons {
+            display: flex;
+            margin-top: 20px; 
+            position: relative; 
+            height: 60px; 
+            width: 100%; 
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            min-height: 50px;
+            font-family: 'Auberge', 'Great Vibes', cursive;
+        } 
+
+        #celebrationModal{
+            display: none;
+            position: fixed;
+            top: 50%; 
+            left: 50%;
+            transform: translate(-50%, 50%);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 100;
+            text-align: center;
+        }
+        
+
+        .overlay{
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+        }
+
+        .confetti {
+            position: fixed;
+            top: -50px;
+            z-index: 1000;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall{
+            to {
+                transform: translate(10vw, 100vh);
+            }
+        }
+
+        button {
+            border: none; 
+            padding: 15px 30px; 
+            font-size: 16px; 
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            font-family: 'Auberge', 'Great Vibes', cursive;
+        } 
+
+        .yes{ 
+            background-color : #ffebee; 
+            color: black; 
+            border: 1px 
+            solid #d32f2f; 
+            z-index: 2;
+        }
+
+        .yes:hover {
+            transform: scale(1.1);
+            background-color: #b71c1c;
+        }
+
+        .maybe, .no{ position:static; background-color : #ffebee; color: black; border: 1px solid #d32f2f;}
+
+        .maybe:hover, .no:hover {
+            transform: scale(1.1);
+            background-color: #b71c1c;
+        }
+    </style>
+</head> 
+  <body> 
+    <div class = "container">
+        <img id = valentine-beg src = "static/puss in boots cat eyes GIF.gif", alt = "Waitng...", style = "width: 150px", margin-bottom: 20px>
+        <h1> Valentine as friends? lol</h1>
+        <div class = "buttons">
+            <button class = "yes" onclick = "celebrate()">Yes! 😎</button>
+            <button class = "maybe" onmouseover="moveButton(this)">Maybe 🤔</button>
+            <button class = "no" onmouseover="moveButton(this)">No 🥺</button>
+        </div>
+    </div>
+    <script>
+        function moveButton(button) {
+            //const maybeButton = document.getElementsByClassName('maybe')[0]
+            //const noButton = document.getElementsByClassName('no')[0]
+            const x = Math.random() * (window.innerWidth - button.offsetWidth);
+            const y = Math.random() * (window.innerHeight - button.offsetHeight);
+            button.style.left = x + "px";
+            button.style.top = y + "px";
+        }
+
+        function createConfetti(){
+            // create flower confetti after response yes 
+            const flowers = ["🌼", "🌹"];
+
+            for (let i = 0;  i < 50; i++) {
+                const flower = document.createElement('div'); 
+                
+                flower.className = 'confetti';
+
+                // daisy emoji
+                flower.innerHTML = flowers[Math.floor(Math.random() * flowers.length)];
+
+                // randomize positon 
+                flower.style.left = Math.random() * 100 + 'vw';
+                flower.style.opacity = Math.random();
+                flower.style.animationDuration = Math.random() * 3 + 2 + 's';
+
+                document.body.appendChild(flower);
+
+                // remove confetti after to keep site fresh and fast 
+                setTimeout(() => {
+                    flower.remove();
+                }, 5000);
+            }
+        }
+
+        function celebrate(){
+            document.querySelector('h1').innerHTML = "Yay! Thank you for answering :)"
+
+            // remove buttons after answer yes 
+            document.querySelector('.buttons').style.display = 'none';
+
+            // add gif when answer is yes 
+            document.getElementById('valentine-beg').src = "static/Happy Happy Happy Dancing GIF.gif";
+            
+            createConfetti();
+
+            fetch('/response', {
+                method: "POST", 
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({answer: "yes"})
+            })
+        }
+    </script>
+  
+</html>
